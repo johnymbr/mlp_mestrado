@@ -8,3 +8,5 @@ import numpy as np
 class NeuralNetwork:
     def __init__(self, number_of_layers):
         self.number_of_layers = number_of_layers
+
+    
