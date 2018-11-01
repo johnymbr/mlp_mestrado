@@ -43,7 +43,7 @@ def dataset_minmax(dataset):
 # Normalizando os dados entre 0 e 1
 def normalize_dataset(dataset, minmax):
     for row in dataset:
-        for i in range(len(row)-1):
+        for i in range(len(row) - 1):
             row[i] = (row[i] - minmax[i][0]) / (minmax[i][1] - minmax[i][0])
 
 
@@ -89,10 +89,12 @@ def evaluate_algorithm(dataset, algorithm, n_folds, *args):
             row_copy = list(row)
             test_set.append(row_copy)
             row_copy[-1] = None
-        predicted = algorithm(network, train_set, test_set, n_outputs, l_rate, n_epoch)
+        predicted = algorithm(network, train_set, test_set, n_outputs, l_rate, epsilon)
         actual = [row[-1] for row in fold]
         accuracy = accuracy_metric(actual, predicted)
         scores.append(accuracy)
+
+    print_layers(network)
     return scores
 
 
@@ -170,8 +172,11 @@ def update_weights(network, row, l_rate):
 
 
 # Treinando a rede por um numero fixo de epocas
-def train_network(network, train, l_rate, n_epoch, n_outputs):
-    for epoch in range(n_epoch):
+def train_network(network, train, l_rate, epsilon, n_outputs):
+    epoch = 0
+    eqm_prev = None
+    while True:
+        epoch += 1
         sum_error = 0
         for row in train:
             outputs = forward_propagate(network, row)
@@ -180,8 +185,19 @@ def train_network(network, train, l_rate, n_epoch, n_outputs):
             sum_error += sum([(expected[i] - outputs[i]) ** 2 for i in range(len(expected))])
             backward_propagate_error(network, expected)
             update_weights(network, row, l_rate)
-        print_layers(network)
-        print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, l_rate, sum_error))
+
+        eqm_current = sum_error / len(train)
+        if eqm_prev is None:
+            eqm_prev = eqm_current
+        else:
+            print('>>>', abs(eqm_current - eqm_prev), ' ', epsilon)
+            if abs(eqm_current - eqm_prev) <= epsilon:
+                print('converged in epoch >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', epoch)
+                break
+            eqm_prev = eqm_current
+
+        # print_layers(network)
+        # print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, l_rate, sum_error))
 
 
 # Predicao com a rede treinada
@@ -197,8 +213,8 @@ def print_layers(network):
 
 
 #
-def back_propagation(network, train, test, n_outputs, l_rate, n_epoch):
-    train_network(network, train, l_rate, n_epoch, n_outputs)
+def back_propagation(network, train, test, n_outputs, l_rate, epsilon):
+    train_network(network, train, l_rate, epsilon, n_outputs)
     predictions = list()
     for row in test:
         prediction = predict(network, row)
@@ -210,11 +226,11 @@ seed(1)
 
 filename = 'wheat-seeds.csv'
 dataset = load_csv(filename)
-for i in range(len(dataset[0])-1):
+for i in range(len(dataset[0]) - 1):
     str_column_to_float(dataset, i)
 
 # convertendo coluna de classe para inteiros
-str_column_to_int(dataset, len(dataset[0])-1)
+str_column_to_int(dataset, len(dataset[0]) - 1)
 # normalizando dados
 minmax = dataset_minmax(dataset)
 normalize_dataset(dataset, minmax)
@@ -223,6 +239,7 @@ n_folds = 5
 l_rate = 0.3
 n_epoch = 500
 n_hidden = 5
-scores = evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, n_epoch, n_hidden)
+epsilon = 1e-07
+scores = evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, epsilon, n_hidden)
 print('Scores: %s' % scores)
-print('Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores))))
+print('Mean Accuracy: %.3f%%' % (sum(scores) / float(len(scores))))
