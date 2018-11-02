@@ -224,7 +224,7 @@ def back_propagation(network, train, test, n_outputs, l_rate, epsilon):
 
 seed(1)
 
-filename = 'wheat-seeds.csv'
+filename = 'result_matrix_ml.csv'
 dataset = load_csv(filename)
 for i in range(len(dataset[0]) - 1):
     str_column_to_float(dataset, i)
