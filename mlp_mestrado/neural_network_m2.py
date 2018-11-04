@@ -190,8 +190,8 @@ def train_network(network, train, l_rate, epsilon, n_outputs):
         if eqm_prev is None:
             eqm_prev = eqm_current
         else:
-            print('>>>', abs(eqm_current - eqm_prev), ' ', epsilon)
             if abs(eqm_current - eqm_prev) <= epsilon:
+                print('>>>', abs(eqm_current - eqm_prev), ' ', epsilon)
                 print('converged in epoch >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', epoch)
                 break
             eqm_prev = eqm_current
@@ -238,7 +238,7 @@ normalize_dataset(dataset, minmax)
 n_folds = 5
 l_rate = 0.3
 n_epoch = 500
-n_hidden = 5
+n_hidden = 3
 epsilon = 1e-07
 scores = evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, epsilon, n_hidden)
 print('Scores: %s' % scores)
