@@ -95,7 +95,7 @@ def evaluate_algorithm(dataset, algorithm, n_folds, *args):
         scores.append(accuracy)
 
     print_layers(network)
-    return scores
+    return scores, network
 
 
 # Iniciando a rede
@@ -224,22 +224,38 @@ def back_propagation(network, train, test, n_outputs, l_rate, epsilon):
 
 seed(1)
 
-filename = 'result_matrix_ml.csv'
+filename = 'xor_ml.csv'
 dataset = load_csv(filename)
 for i in range(len(dataset[0]) - 1):
     str_column_to_float(dataset, i)
 
 # convertendo coluna de classe para inteiros
-str_column_to_int(dataset, len(dataset[0]) - 1)
+lookup = str_column_to_int(dataset, len(dataset[0]) - 1)
 # normalizando dados
-minmax = dataset_minmax(dataset)
-normalize_dataset(dataset, minmax)
+# minmax = dataset_minmax(dataset)
+# normalize_dataset(dataset, minmax)
 # avaliacao algoritmo
-n_folds = 5
+n_folds = 3
 l_rate = 0.3
 n_epoch = 500
-n_hidden = 3
+n_hidden = 1
 epsilon = 1e-07
-scores = evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, epsilon, n_hidden)
+scores, network = evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, epsilon, n_hidden)
 print('Scores: %s' % scores)
 print('Mean Accuracy: %.3f%%' % (sum(scores) / float(len(scores))))
+print('Lookup: %s' % lookup)
+
+filename_test = 'xor_ml.csv'
+dataset_test = load_csv(filename_test)
+for i in range(len(dataset_test[0]) - 1):
+    str_column_to_float(dataset_test, i)
+
+# convertendo coluna de classe para inteiros
+lookup = str_column_to_int(dataset_test, len(dataset_test[0]) - 1)
+# normalizando dados
+# minmax = dataset_minmax(dataset_test)
+# normalize_dataset(dataset_test, minmax)
+
+for row in dataset_test:
+    prediction = predict(network, row)
+    print('Expected=%d, Got=%d' % (row[-1], prediction))
