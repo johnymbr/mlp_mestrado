@@ -1,4 +1,4 @@
-from random import random, randrange
+from random import seed, random, randrange
 import numpy as np
 from csv import reader
 
@@ -71,7 +71,7 @@ def accuracy_metric(actual, predicted):
 
 
 # Avalia algoritmo de aprendizagem usando cross validation
-def evaluate_algorithm(dataset, algorithm, n_folds, n_hidden, l_rate, epsilon):
+def evaluate_algorithm(dataset, algorithm, n_folds, *args):
     n_inputs = len(dataset[0]) - 1
     n_outputs = len(set([row[-1] for row in dataset]))
     network = initialize_network(n_inputs, n_hidden, n_outputs)
@@ -103,8 +103,6 @@ def initialize_network(n_inputs, n_hidden, n_outputs):
     network = list()
     hidden_layer = [{'weights': [random() for i in range(n_inputs + 1)]} for i in range(n_hidden)]
     network.append(hidden_layer)
-    hidden_layer_2 = [{'weights': [random() for i in range(n_hidden + 1)]} for i in range(n_hidden)]
-    network.append(hidden_layer_2)
     output_layer = [{'weights': [random() for i in range(n_hidden + 1)]} for i in range(n_outputs)]
     network.append(output_layer)
     return network
@@ -192,10 +190,6 @@ def train_network(network, train, l_rate, epsilon, n_outputs):
         if eqm_prev is None:
             eqm_prev = eqm_current
         else:
-
-            if epoch % 500 == 0:
-                print('>>>', abs(eqm_current - eqm_prev), ' ', epsilon, ' | epoch: ', epoch)
-
             if abs(eqm_current - eqm_prev) <= epsilon:
                 print('>>>', abs(eqm_current - eqm_prev), ' ', epsilon)
                 print('converged in epoch >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', epoch)
@@ -226,3 +220,42 @@ def back_propagation(network, train, test, n_outputs, l_rate, epsilon):
         prediction = predict(network, row)
         predictions.append(prediction)
     return predictions
+
+
+seed(1)
+
+filename = 'xor_ml.csv'
+dataset = load_csv(filename)
+for i in range(len(dataset[0]) - 1):
+    str_column_to_float(dataset, i)
+
+# convertendo coluna de classe para inteiros
+lookup = str_column_to_int(dataset, len(dataset[0]) - 1)
+# normalizando dados
+# minmax = dataset_minmax(dataset)
+# normalize_dataset(dataset, minmax)
+# avaliacao algoritmo
+n_folds = 3
+l_rate = 0.3
+n_epoch = 500
+n_hidden = 1
+epsilon = 1e-07
+scores, network = evaluate_algorithm(dataset, back_propagation, n_folds, l_rate, epsilon, n_hidden)
+print('Scores: %s' % scores)
+print('Mean Accuracy: %.3f%%' % (sum(scores) / float(len(scores))))
+print('Lookup: %s' % lookup)
+
+filename_test = 'xor_ml.csv'
+dataset_test = load_csv(filename_test)
+for i in range(len(dataset_test[0]) - 1):
+    str_column_to_float(dataset_test, i)
+
+# convertendo coluna de classe para inteiros
+lookup = str_column_to_int(dataset_test, len(dataset_test[0]) - 1)
+# normalizando dados
+# minmax = dataset_minmax(dataset_test)
+# normalize_dataset(dataset_test, minmax)
+
+for row in dataset_test:
+    prediction = predict(network, row)
+    print('Expected=%d, Got=%d' % (row[-1], prediction))
