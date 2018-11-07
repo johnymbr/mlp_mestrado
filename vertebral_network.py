@@ -1,5 +1,8 @@
 from random import seed
 from mlp_mestrado import neural_network_m2 as nn
+import sys
+
+sys.path.append('../')
 
 seed(1)
 

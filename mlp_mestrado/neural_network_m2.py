@@ -94,20 +94,6 @@ def evaluate_algorithm(dataset, algorithm, n_folds, n_hidden, l_rate, epsilon):
         accuracy = accuracy_metric(actual, predicted)
         scores.append(accuracy)
 
-    for fold in folds:
-        train_set = list(folds)
-        train_set.remove(fold)
-        train_set = sum(train_set, [])
-        test_set = list()
-        for row in fold:
-            row_copy = list(row)
-            test_set.append(row_copy)
-            row_copy[-1] = None
-        predicted = algorithm(network, train_set, test_set, n_outputs, l_rate, epsilon)
-        actual = [row[-1] for row in fold]
-        accuracy = accuracy_metric(actual, predicted)
-        scores.append(accuracy)
-
     print_layers(network)
     return scores, network
 
@@ -132,14 +118,14 @@ def activate(weights, inputs):
 
 # Funcao de transferencia
 def transfer(activation):
-    return 1.0 / (1.0 + np.exp(-activation))
-    # return np.tanh(activation)
+    # return 1.0 / (1.0 + np.exp(-activation))
+    return np.tanh(activation)
 
 
 # Funcao de transferencia derivada
 def transfer_derivative(output):
-    return output * (1.0 - output)
-    # return 1 - (output ** 2)
+    # return output * (1.0 - output)
+    return 1 - (output ** 2)
 
 
 # Propagando o dado para a saida da rede
