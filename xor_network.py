@@ -9,7 +9,9 @@ for i in range(len(dataset[0]) - 1):
     nn.str_column_to_float(dataset, i)
 
 # convertendo coluna de classe para inteiros
+print(dataset)
 lookup = nn.str_column_to_int(dataset, len(dataset[0]) - 1)
+print(dataset)
 # normalizando dados
 # minmax = dataset_minmax(dataset)
 # normalize_dataset(dataset, minmax)

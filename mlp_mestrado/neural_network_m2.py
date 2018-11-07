@@ -71,10 +71,10 @@ def accuracy_metric(actual, predicted):
 
 
 # Avalia algoritmo de aprendizagem usando cross validation
-def evaluate_algorithm(dataset, algorithm, n_folds, n_hidden, l_rate, epsilon):
+def evaluate_algorithm(dataset, algorithm, n_folds, n_layers, n_hidden, l_rate, epsilon):
     n_inputs = len(dataset[0]) - 1
     n_outputs = len(set([row[-1] for row in dataset]))
-    network = initialize_network(n_inputs, n_hidden, n_outputs)
+    network = initialize_network(n_inputs, n_layers, n_hidden, n_outputs)
 
     print_layers(network)
 
@@ -99,10 +99,13 @@ def evaluate_algorithm(dataset, algorithm, n_folds, n_hidden, l_rate, epsilon):
 
 
 # Iniciando a rede
-def initialize_network(n_inputs, n_hidden, n_outputs):
+def initialize_network(n_inputs, n_layers, n_hidden, n_outputs):
     network = list()
     hidden_layer = [{'weights': [random() for i in range(n_inputs + 1)]} for i in range(n_hidden)]
     network.append(hidden_layer)
+    for i in range(n_layers - 1):
+        hidden_layer = [{'weights': [random() for i in range(len(hidden_layer) + 1)]} for i in range(n_hidden)]
+        network.append(hidden_layer)
     output_layer = [{'weights': [random() for i in range(n_hidden + 1)]} for i in range(n_outputs)]
     network.append(output_layer)
     return network
@@ -118,14 +121,14 @@ def activate(weights, inputs):
 
 # Funcao de transferencia
 def transfer(activation):
-    # return 1.0 / (1.0 + np.exp(-activation))
-    return np.tanh(activation)
+    return 1.0 / (1.0 + np.exp(-activation))
+    # return np.tanh(activation)
 
 
 # Funcao de transferencia derivada
 def transfer_derivative(output):
-    # return output * (1.0 - output)
-    return 1 - (output ** 2)
+    return output * (1.0 - output)
+    # return 1 - (output ** 2)
 
 
 # Propagando o dado para a saida da rede
