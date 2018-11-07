@@ -3,7 +3,7 @@ from mlp_mestrado import neural_network_m2 as nn
 
 seed(1)
 
-filename = 'result_matrix_ml.csv'
+filename = 'vertebral_ml.csv'
 dataset = nn.load_csv(filename)
 for i in range(len(dataset[0]) - 1):
     nn.str_column_to_float(dataset, i)
@@ -15,16 +15,16 @@ minmax = nn.dataset_minmax(dataset)
 nn.normalize_dataset(dataset, minmax)
 # avaliacao algoritmo
 n_folds = 5
-l_rate = 0.1
+l_rate = 0.3
 n_epoch = 500
-n_hidden = 10
+n_hidden = 5
 epsilon = 1e-07
 scores, network = nn.evaluate_algorithm(dataset, nn.back_propagation, n_folds, n_hidden, l_rate, epsilon)
 print('Scores: %s' % scores)
 print('Mean Accuracy: %.3f%%' % (sum(scores) / float(len(scores))))
 print('Lookup: %s' % lookup)
 
-filename_test = 'result_matrix_test.csv'
+filename_test = 'vertebral_test.csv'
 dataset_test = nn.load_csv(filename_test)
 for i in range(len(dataset_test[0]) - 1):
     nn.str_column_to_float(dataset_test, i)
