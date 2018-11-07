@@ -17,8 +17,8 @@ nn.normalize_dataset(dataset, minmax)
 n_folds = 5
 l_rate = 0.3
 n_epoch = 500
-n_hidden = 5
-epsilon = 2e-07
+n_hidden = 20
+epsilon = 1e-06
 scores, network = nn.evaluate_algorithm(dataset, nn.back_propagation, n_folds, n_hidden, l_rate, epsilon)
 print('Scores: %s' % scores)
 print('Mean Accuracy: %.3f%%' % (sum(scores) / float(len(scores))))
