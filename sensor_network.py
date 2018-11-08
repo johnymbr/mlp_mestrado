@@ -15,7 +15,7 @@ minmax = nn.dataset_minmax(dataset)
 nn.normalize_dataset(dataset, minmax)
 # avaliacao algoritmo
 n_folds = 5
-l_rate = 0.3
+l_rate = 0.5
 n_epoch = 500
 n_layers = 2
 n_hidden = 5
