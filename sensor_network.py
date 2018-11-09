@@ -15,9 +15,9 @@ minmax = nn.dataset_minmax(dataset)
 nn.normalize_dataset(dataset, minmax)
 # avaliacao algoritmo
 n_folds = 5
-l_rate = 0.5
+l_rate = 0.05
 n_epoch = 500
-n_layers = 2
+n_layers = 1
 n_hidden = 5
 epsilon = 1e-07
 scores, network = nn.evaluate_algorithm(dataset, nn.back_propagation, n_folds, n_layers, n_hidden, l_rate, epsilon)
