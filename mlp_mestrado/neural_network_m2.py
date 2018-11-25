@@ -1,7 +1,7 @@
 from random import random, randrange
 import numpy as np
 from csv import reader
-
+import matplotlib.pyplot as plt
 
 # Carregando um arquivo CSV
 def load_csv(filename):
@@ -180,6 +180,7 @@ def update_weights(network, row, l_rate):
 def train_network(network, train, l_rate, epsilon, n_outputs):
     epoch = 0
     eqm_prev = None
+    errorsqm = []
     while True:
         epoch += 1
         sum_error = 0
@@ -192,6 +193,9 @@ def train_network(network, train, l_rate, epsilon, n_outputs):
             update_weights(network, row, l_rate)
 
         eqm_current = sum_error / len(train)
+
+        errorsqm.append(eqm_current)
+
         if eqm_prev is None:
             eqm_prev = eqm_current
         else:
@@ -202,6 +206,13 @@ def train_network(network, train, l_rate, epsilon, n_outputs):
             if abs(eqm_current - eqm_prev) <= epsilon:
                 print('>>>', abs(eqm_current - eqm_prev), ' ', epsilon)
                 print('converged in epoch >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', epoch)
+
+                # Plota como o erro se comportou em relacao as epocas
+                plt.plot(errorsqm)
+                plt.xlabel('Epocas')
+                plt.ylabel('EQM')
+                plt.show()
+
                 break
             eqm_prev = eqm_current
 

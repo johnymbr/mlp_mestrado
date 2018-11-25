@@ -14,11 +14,11 @@ lookup = nn.str_column_to_int(dataset, len(dataset[0]) - 1)
 minmax = nn.dataset_minmax(dataset)
 nn.normalize_dataset(dataset, minmax)
 # avaliacao algoritmo
-n_folds = 5
-l_rate = 0.3
+n_folds = 4
+l_rate = 0.01
 n_epoch = 500
 n_layers = 2
-n_hidden = 5
+n_hidden = 4
 epsilon = 1e-07
 scores, network = nn.evaluate_algorithm(dataset, nn.back_propagation, n_folds, n_layers, n_hidden, l_rate, epsilon)
 print('Scores: %s' % scores)
