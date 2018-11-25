@@ -121,14 +121,14 @@ def activate(weights, inputs):
 
 # Funcao de transferencia
 def transfer(activation):
-    return 1.0 / (1.0 + np.exp(-activation))
-    # return np.tanh(activation)
+    # return 1.0 / (1.0 + np.exp(-activation))
+    return np.tanh(activation)
 
 
 # Funcao de transferencia derivada
 def transfer_derivative(output):
-    return output * (1.0 - output)
-    # return 1 - (output ** 2)
+    # return output * (1.0 - output)
+    return 1 - (output ** 2)
 
 
 # Propagando o dado para a saida da rede
@@ -199,7 +199,6 @@ def train_network(network, train, l_rate, epsilon, n_outputs):
         if eqm_prev is None:
             eqm_prev = eqm_current
         else:
-
             if epoch % 500 == 0:
                 print('>>>', abs(eqm_current - eqm_prev), ' ', epsilon, ' | epoch: ', epoch)
 
