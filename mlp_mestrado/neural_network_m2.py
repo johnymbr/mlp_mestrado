@@ -1,6 +1,7 @@
 from random import random, randrange
 import numpy as np
 from csv import reader
+import matplotlib.pyplot as plt
 from datetime import datetime
 
 
@@ -88,8 +89,6 @@ def accuracy_metric(actual, predicted):
 
 # Avalia algoritmo de aprendizagem usando cross validation
 def evaluate_algorithm(dataset, algorithm, n_folds, n_layers, n_hidden, l_rate, epsilon):
-    global global_epoch
-    global_epoch = 0
     n_inputs = len(dataset[0]) - 1
     n_outputs = len(set([row[-1] for row in dataset]))
     """
@@ -249,13 +248,11 @@ def update_weights(network, row, l_rate):
 
 # Treinando a rede por um numero fixo de epocas
 def train_network(network, train, l_rate, epsilon, n_outputs):
-    global global_epoch
     epoch = 0
     eqm_prev = None
-    error_per_epoch = None
+    errorsqm = []
     while True:
         epoch += 1
-        global_epoch += 1
         sum_error = 0
 
         """
@@ -274,6 +271,9 @@ def train_network(network, train, l_rate, epsilon, n_outputs):
 
         # calcula o erro corrente
         eqm_current = sum_error / len(train)
+
+        errorsqm.append(eqm_current)
+
         if eqm_prev is None:
             eqm_prev = eqm_current
         else:
@@ -283,19 +283,18 @@ def train_network(network, train, l_rate, epsilon, n_outputs):
             if abs(eqm_current - eqm_prev) <= epsilon:
                 print('>>>', abs(eqm_current - eqm_prev), ' ', epsilon)
                 print('converged in epoch >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', epoch)
+
+                # Plota como o erro se comportou em relacao as epocas
+                plt.plot(errorsqm)
+                plt.xlabel('Epocas')
+                plt.ylabel('EQM')
+                plt.show()
+
                 break
             eqm_prev = eqm_current
 
-        if error_per_epoch is None:
-            error_per_epoch = np.array([[global_epoch, eqm_current]])
-        else:
-            error_per_epoch = np.concatenate((error_per_epoch, [[global_epoch, eqm_current]]))
-
         # print_layers(network)
         # print('>epoch=%d, lrate=%.3f, error=%.3f' % (epoch, l_rate, sum_error))
-
-    with open('error_per_epoch.csv', 'a') as f_handle:
-        np.savetxt(f_handle, error_per_epoch, fmt='%.10f', delimiter=',', )
 
 
 # Predicao com a rede treinada
